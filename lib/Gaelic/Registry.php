@@ -13,6 +13,14 @@ class Registry
 
     protected function __clone ( ) { }
 
+    static function reset ( )
+    {
+        static::$_locked = array();
+
+        static::$_register = array();
+    }
+
+
     static function isLocked ( $key )
     {
         return isset(static::$_locked[$key]);
@@ -34,7 +42,7 @@ class Registry
 
     static function set ( $key, $value, $locked = false )
     {
-        if ( static::isLocked($key) ) throw new Exception\LockedError(
+        if ( static::isLocked($key) ) throw new Exception\RegistryLockError(
             "'{$key}' is locked and cannot be set() again."
         );
 
