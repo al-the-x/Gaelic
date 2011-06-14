@@ -4,35 +4,33 @@ namespace Gaelic;
 
 class Route // TODO: extends Object
 {
-    protected $_options = array();
+    protected $_route;
+
+    protected $_handler;
+
+    protected $_params = array();
+
+    protected $_defaults = array();
+
 
     function __construct ( $route, $handler, $params = array(), $defaults = array() )
     {
-        // TODO: Initialize new \Gaelic\Options from compact() instead...
-        // parent::__construct(compact($route, $handler, $params, $defaults))
-        $this->option(compact($route, $handler, $params, $defaults));
+        $this->_route = $route;
+
+        $this->_handler = $handler;
+
+        $this->_params = $params;
+
+        $this->_defaults = $defaults;
     }
 
-    // TODO: Move to \Gaelic\Options::get/set/__construct...
-    function option ( $name, $value = null )
+    function match ( $uri )
     {
-        if ( is_null($value) )
-        {
-            if ( is_array($name) )
-            {
-                foreach ( $name as $key => $value )
-                {
-                    $this->_options["_{$key}"] = $value;
-                }
+        return (boolean) preg_match("#{$this->_route}#", $uri);
+    }
 
-                return $this;
-            }
 
-            return $this->_options["_{$name}"];
-        }
-
-        $this->_options["_{$name}"] = $value;
-
-        return this;
-    } // END option
+    function run ( Request $request, Response $response )
+    {
+    }
 } // END Route
