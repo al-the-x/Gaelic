@@ -1,0 +1,5 @@
+<phpunit>
+    <php>
+        <includePath>../lib/</includePath>
+    </php>
+</phpunit>
