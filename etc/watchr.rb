@@ -1,4 +1,4 @@
-watch(/lib\/.+\.php$/) do |matches|
+watch(/(lib|app)\/.+\.php$/) do |matches|
     changed = matches[0]
 
     testfile = changed

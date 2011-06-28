@@ -1,5 +1,1 @@
-<phpunit>
-    <php>
-        <includePath>../lib/</includePath>
-    </php>
-</phpunit>
+<phpunit bootstrap="phpunit.php" />
