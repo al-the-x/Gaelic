@@ -4,13 +4,27 @@ namespace Gaelic;
 
 class Request implements \ArrayAccess
 {
-    const GET = 'GET';
+    const METHOD_GET = 'GET';
 
-    const POST = 'POST';
+    const METHOD_POST = 'POST';
 
-    const SESSION = 'SESSION';
+    const METHOD_PUT = 'PUT';
 
-    const COOKIE = 'COOKIE';
+    const METHOD_PATCH = 'PATCH';
+
+    const METHOD_DELETE = 'DELETE';
+
+    const METHOD_OPTIONS = 'OPTIONS';
+
+    const PARAMS_LOCAL = 'local';
+
+    const PARAMS_GET = 'GET';
+
+    const PARAMS_POST = 'POST';
+
+    const PARAMS_SESSION = 'SESSION';
+
+    const PARAMS_COOKIE = 'COOKIE';
 
     protected $_order = array(
         'local', 'GET', 'POST', 'SESSION', 'COOKIE',
@@ -26,7 +40,7 @@ class Request implements \ArrayAccess
             'POST'    => $_POST,
             'COOKIE'  => $_COOKIE,
             'SESSION' => ( isset($_SESSION) ?
-                $_SESSION : null
+                $_SESSION : array()
             ),
         );
     }
@@ -84,15 +98,26 @@ class Request implements \ArrayAccess
         $this->offsetUnset($name);
     }
 
+
     function getUri ( )
     {
         static $uri;
 
-        $uri = ( isset($uri) ? $uri : (
-            isset($_SERVER['REQUEST_URI']) and !empty($_SERVER['REQUEST_URI']) ?
+        if ( ! isset($uri) )
+        {
+            $uri = ( isset($_SERVER['REQUEST_URI']) ?
                 $_SERVER['REQUEST_URI'] : '/'
-        ));
+            );
+        }
 
         return $uri;
+    }
+
+
+    function getMethod ( )
+    {
+        return ( isset($_SERVER['REQUEST_METHOD']) ?
+            $_SERVER['REQUEST_METHOD'] : 'GET'
+        );
     }
 } // END Request
