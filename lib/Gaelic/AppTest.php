@@ -6,7 +6,7 @@ namespace Gaelic;
  * The "App" class contains the autoloader function used by Gaelic, so we need
  * to "require()" the class definition explicitly to remove that dependency.
  */
-require 'App.php';
+require_once 'App.php';
 
 class AppTest extends \PHPUnit_Framework_TestCase
 {
@@ -114,10 +114,14 @@ class AppTest extends \PHPUnit_Framework_TestCase
                 $result = 'FOOBAR'
             ));
 
-        $route = $this->getMock('\Gaelic\Route');
+        $route = $this->getMock('\Gaelic\Route', array(), array(
+            $request, $response
+        ));
+
         $route->expects($this->any())
             ->method('match')
             ->will($this->returnValue(true));
+
         $route->expects($this->any())
             ->method('run')
             ->with($request, $response)
