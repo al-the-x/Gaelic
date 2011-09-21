@@ -1,10 +1,16 @@
 <?php
 
-namespace Gaelic;
+namespace Test;
+
+use \Gaelic\Request as Request;
+
+use \Gaelic\Response as Response;
+
+use \Gaelic\Route as Route;
 
 class MockCalledException extends \Exception { }
 
-class MockHandler extends Handler
+class MockHandler extends \Gaelic\Handler
 {
     function __invoke ( )
     {
@@ -20,7 +26,7 @@ class RouteTest extends \PHPUnit_Framework_TestCase
 
         $this->response = $this->getMock('\Gaelic\Response');
 
-        $this->fixture = new Route('/path/to/resource', '\Gaelic\MockHandler');
+        $this->fixture = new Route('/path/to/resource', '\Test\MockHandler');
     }
 
     function provide_uri ( )

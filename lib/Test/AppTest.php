@@ -1,19 +1,15 @@
 <?php
 
-namespace Gaelic;
+namespace Test;
 
-/**
- * The "App" class contains the autoloader function used by Gaelic, so we need
- * to "require()" the class definition explicitly to remove that dependency.
- */
-require_once 'App.php';
+use \Gaelic\App as App;
+
+use \Gaelic\Registry as Registry;
 
 class AppTest extends \PHPUnit_Framework_TestCase
 {
     function tearDown ( )
     {
-        require_once 'Registry.php';
-
         Registry::reset();
     }
 

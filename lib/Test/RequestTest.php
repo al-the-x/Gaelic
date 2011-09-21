@@ -1,6 +1,8 @@
 <?php
 
-namespace Gaelic;
+namespace Test;
+
+use \Gaelic\Request as Request;
 
 class RequestTest extends \PHPUnit_Framework_TestCase
 {
@@ -9,8 +11,6 @@ class RequestTest extends \PHPUnit_Framework_TestCase
         $_POST['a'] = 1;
 
         $_GET['a'] = 2;
-
-        require_once 'Request.php';
 
         $this->fixture = new Request;
     }

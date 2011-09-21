@@ -64,10 +64,9 @@ class App
             'No classname was provided!'
         );
 
-        // So root-level namespaces don't trip us up...
-        $classname = ltrim($classname, '\\');
+        $filename = ltrim(strtr($classname, '\\_', '/') . '.php', '/');
 
-        require strtr($classname, '\\_', '/') . '.php';
+        if ( @fopen($filename, 'r', true) ) require $filename;
     }
 
 
