@@ -1,8 +1,12 @@
 <?php
 
-set_include_path('./lib' . PATH_SEPARATOR . get_include_path());
+define('LIB_PATH', realpath(dirname(__DIR__) . '/lib'));
 
-require_once 'Gaelic/App.php';
+set_include_path(LIB_PATH . PATH_SEPARATOR . get_include_path());
 
-spl_autoload_register(array('\Gaelic\App', 'load'));
+spl_autoload_register(function( $classname ){
+    $filename = ltrim(strtr($classname, '\\', '/'), '/') . '.php';
+
+    if ( file_exists(LIB_PATH . '/' . $filename) ) include $filename;
+});
 
