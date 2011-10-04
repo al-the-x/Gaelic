@@ -8,6 +8,13 @@ use \Gaelic\Registry as Registry;
 
 class AppTest extends \PHPUnit_Framework_TestCase
 {
+    function setUp ( )
+    {
+        // We'll need this in a couple of tests...
+        $this->rootpath = realpath('.');
+    }
+
+
     function tearDown ( )
     {
         Registry::reset();
@@ -48,15 +55,11 @@ class AppTest extends \PHPUnit_Framework_TestCase
 
     function test_init_bare ( )
     {
-        $path = realpath('.');
+        $app = App::init($this->rootpath);
 
-        $this->assertFileExists($path);
-
-        $app = App::init(realpath('.'));
-
-        $this->assertInstanceOf('\Gaelic\App', $app);
-
-        $this->assertSame(Registry::get(App::REGISTRY_KEY), $app);
+        $this->assertSame(Registry::get(App::REGISTRY_KEY), $app,
+            'The App Singleton should be stored in the Registry now'
+        );
     }
 
 
@@ -72,31 +75,46 @@ class AppTest extends \PHPUnit_Framework_TestCase
 
     function test_init_with_include_path ( )
     {
-        $rootpath = realpath('.');
-
         $paths = array( 'etc', 'app' );
 
         $include_path = explode(PATH_SEPARATOR, get_include_path());
 
         foreach ( $paths as $path ) $this->assertNotContains(
-            "$rootpath/$path", $include_path
+            "{$this->rootpath}/{$path}", $include_path,
+            get_include_path()
         );
 
         App::init(array(
-            'ROOT_PATH' => $rootpath,
+            'ROOT_PATH' => $this->rootpath,
             'include_path' => $paths,
         ));
 
         $include_path = explode(PATH_SEPARATOR, get_include_path());
 
         foreach ( $paths as $path ) $this->assertContains(
-            "$rootpath/$path", $include_path,
+            "{$this->rootpath}/{$path}", $include_path,
             get_include_path()
         );
     }
 
 
-    function test_run ( )
+    function setup_request_and_response ( )
+    {
+        $request = $this->getMock('\Gaelic\Request');
+        $request->expects($this->atLeastOnce())
+            ->method('getUri')
+            ->will($this->returnValue('/'));
+
+        $response = $this->getMock('\Gaelic\Response', array('render'));
+        $response->expects($this->once())
+            ->method('render')
+            ->will($this->returnValue(
+                $result = 'FOOBAR'
+            ));
+    }
+
+
+    function test_run_with_MockHandler ( )
     {
         $request = $this->getMock('\Gaelic\Request');
         $request->expects($this->atLeastOnce())
@@ -110,22 +128,13 @@ class AppTest extends \PHPUnit_Framework_TestCase
                 $result = 'FOOBAR'
             ));
 
-        $route = $this->getMock('\Gaelic\Route', array(), array(
-            $request, $response
-        ));
-
-        $route->expects($this->any())
-            ->method('match')
-            ->will($this->returnValue(true));
-
-        $route->expects($this->any())
-            ->method('run')
-            ->with($request, $response)
-            ->will($this->returnValue($response));
-
         ob_start();
 
-        App::init(realpath('.'))->run($request, $response);
+        App::init($this->rootpath)->addRoute(
+            new \Gaelic\Route('/', function( \Gaelic\Request $request ) use ( $response ){
+                return $response;
+            })
+        )->run($request, $response);
 
         $this->assertEquals($result, ob_get_clean());
     }

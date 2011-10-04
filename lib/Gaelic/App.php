@@ -72,7 +72,7 @@ class App
 
     function addRoute ( Route $route )
     {
-        $this->_routes[$route->name] = $route;
+        isset($route->name) and ($this->_routes[$route->name] = $route) or ($this->_routes[] = $route);
 
         return $this;
     }
