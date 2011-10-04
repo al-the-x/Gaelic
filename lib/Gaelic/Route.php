@@ -46,14 +46,25 @@ class Route // TODO: extends Object
     {
         $handler = $this->getHandler();
 
-        return new $handler($request, $response);
+        if ( is_callable($handler) )
+            return call_user_func_array($handler, array($request, $response));
+
+        if ( is_string($handler) and in_array('Gaelic\Handler', class_parents($handler)) )
+            return new $handler($request, $response);
+
+        return $handler($request, $response);
     }
 
 
-    function __invoke ( Request $request, Response $response )
+    function run ( Request $request, Response $response )
     {
         $handler = $this->initHandler($request, $response);
 
         return $handler($request->getMethod());
+    }
+
+    function __invoke ( Request $request, Response $response )
+    {
+        return $this->run($request, $response);
     }
 } // END Route

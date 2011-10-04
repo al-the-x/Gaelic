@@ -29,6 +29,19 @@ class RouteTest extends \PHPUnit_Framework_TestCase
         $this->fixture = new Route('/path/to/resource', '\Test\MockHandler');
     }
 
+
+    function setup_request ( )
+    {
+        $this->request
+            ->expects($this->once())
+            ->method('getMethod')
+            ->will($this->returnValue(
+                Request::METHOD_GET
+            ))
+        ; // END expects
+    }
+
+
     function provide_uri ( )
     {
         return array(
@@ -53,24 +66,28 @@ class RouteTest extends \PHPUnit_Framework_TestCase
 
     function test_getHandler ( )
     {
-        $this->assertEquals('\Gaelic\MockHandler', $this->fixture->getHandler());
+        $this->assertEquals('\Test\MockHandler', $this->fixture->getHandler());
+    }
+
+
+    function test_run ( )
+    {
+        $this->setup_request();
+
+        $this->setExpectedException('\Test\MockCalledException');
+
+        $this->fixture->run($this->request, $this->response);
     }
 
 
     function test_invoke ( )
     {
-        $route = $this->fixture; // Thanks PHP... :[
+        $this->setup_request();
 
-        $this->request
-            ->expects($this->once())
-            ->method('getMethod')
-            ->will($this->returnValue(
-                Request::METHOD_GET
-            ))
-        ; // END expects
+        $this->setExpectedException('\Test\MockCalledException');
 
-        $this->setExpectedException('\Gaelic\MockCalledException');
-
-        $route($this->request, $this->response);
+        $route = $this->fixture and $route(
+            $this->request, $this->response
+        );
     }
 } // END RouteTest_simple
