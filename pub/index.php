@@ -2,18 +2,16 @@
 
 require_once '../lib/Gaelic/App.php';
 
-define_default( 'ROOT_PATH', realpath(dirname(dirname(__FILE__))) );
+define_default( 'GAELIC_APP_PATH', realpath(dirname(__DIR__) . '/app') );
 
 \Gaelic\App::init(array(
-    'include_path' => array( 'app', 'lib' ),
     'routes' => array(
-        array('/', '\HelloWorldPage'),
-        array('/HelloWorld', function( $request ){
+        array('/', function( $request ){
             return 'Hello World!';
         }),
-        array('/Hello/:name', '\HelloNamePage', array(
-            ':name' => 'World'
+        array('/hello/(name)', '\HelloPage', array(
+            'name' => 'world',
         )),
-    ),
+    ), // END routes
 ))->run();
 
